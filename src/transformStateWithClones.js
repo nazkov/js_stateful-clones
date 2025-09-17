@@ -7,7 +7,7 @@
  * @return {Object[]}
  */
 function transformStateWithClones(state, actions) {
-  let currentState = { ...state }; // копія початкового стану
+  let currentState = { ...state };
   const result = [];
 
   for (const action of actions) {
@@ -17,14 +17,19 @@ function transformStateWithClones(state, actions) {
         break;
 
       case 'addProperties':
-        currentState = { ...currentState, ...action.extraData };
+        currentState = {
+          ...currentState,
+          ...(action.extraData || {}),
+        };
         break;
 
       case 'removeProperties':
         currentState = { ...currentState };
 
-        for (const key of action.keysToRemove) {
-          delete currentState[key];
+        if (Array.isArray(action.keysToRemove)) {
+          for (const key of action.keysToRemove) {
+            delete currentState[key];
+          }
         }
         break;
 
@@ -32,7 +37,7 @@ function transformStateWithClones(state, actions) {
         currentState = { ...currentState };
     }
 
-    result.push(currentState);
+    result.push({ ...currentState });
   }
 
   return result;
